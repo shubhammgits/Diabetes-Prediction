@@ -1,3 +1,4 @@
+import json
 import requests
 
 url = 'http://127.0.0.1:8000/diabetes_prediction'
@@ -10,13 +11,11 @@ input_data_for_model = {
     "Insulin": 0,
     "BMI": 26.6,
     "DiabetesPedigreeFunction": 0.351,
-    "Age": 31
+    "Age": 3
 }
 
-response = requests.post(url, json=input_data_for_model)
+input_json = json.dumps(input_data_for_model)
 
-# Check the status code to make sure the request was successful
-print(f"Status Code: {response.status_code}")
+response = requests.post(url, data=input_json)
 
-# Print the response from the API
-print(f"Response Body: {response.text}")
+print(response.text)

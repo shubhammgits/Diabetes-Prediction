@@ -2,8 +2,6 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import pickle
 import json
-import numpy as np
-
 
 app = FastAPI()
 
@@ -22,31 +20,25 @@ diabetes_model = pickle.load(open('diabetes_model.sav', 'rb'))
 
 
 @app.post('/diabetes_prediction')
-def diabetes_pred(input_parameters: model_input):
+def diabetes_pred(input_parameters : model_input):
 
-    # --- FIX 2: Get data directly from the Pydantic model ---
-    # This is much cleaner and more efficient.
-    input_list = [
-        input_parameters.Pregnancies,
-        input_parameters.Glucose,
-        input_parameters.BloodPressure,
-        input_parameters.SkinThickness,
-        input_parameters.Insulin,
-        input_parameters.BMI,
-        input_parameters.DiabetesPedigreeFunction,
-        input_parameters.Age
-    ]
+    input_data = input_parameters.json()
+    input_dictionary = json.loads(input_data)
 
-    # Convert to a numpy array for the model
-    input_data_as_numpy_array = np.asarray(input_list)
-    
-    # Reshape the array as we are predicting for one instance
-    input_data_reshaped = input_data_as_numpy_array.reshape(1, -1)
+    preg = input_dictionary['Pregnancies']
+    glu = input_dictionary['Glucose']
+    bp = input_dictionary['BloodPressure']
+    skin = input_dictionary['SkinThickness']
+    insulin = input_dictionary['Insulin']
+    bmi = input_dictionary['BMI']
+    dbf = input_dictionary['DiabetesPedigreeFunction']
+    age = input_dictionary['Age']
 
-    # Make the prediction
-    prediction = diabetes_model.predict(input_data_reshaped)
+    input_list = [preg, glu, bp, skin, insulin, bmi, dbf, age]
 
-    if prediction[0] == 0:
+    prediction = diabetes_model.predict([input_list])
+
+    if(prediction[0] == 0):
         return 'The person is not diabetic'
     else:
-        return 'The person is diabetic'
+        return 'The person is diabetic' 
