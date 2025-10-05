@@ -1,7 +1,6 @@
-import json
 import requests
 
-url = 'http://127.0.0.1:8001/diabetes_prediction'
+url = 'https://70624a1d7c44.ngrok-free.app/diabetes_prediction'
 
 input_data_for_model = {
     "Pregnancies": 1,
@@ -14,8 +13,7 @@ input_data_for_model = {
     "Age": 33
 }
 
-headers = {'Content-Type': 'application/json'}
-response = requests.post(url, json=input_data_for_model, headers=headers)
+response = requests.post(url, json=input_data_for_model)
 
 print("Status Code:", response.status_code)
-print("Response:", response.text)
+print("Response JSON:", response.json())
