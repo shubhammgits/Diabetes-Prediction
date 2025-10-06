@@ -40,7 +40,7 @@ const CreatorBadge = () => {
           transition={{ type: "spring", stiffness: 300 }}
         >
           <img
-            src="./photo.jpeg"
+            src="/photo.jpeg"
             alt="Shubham"
             className="w-full h-full object-cover"
           />
