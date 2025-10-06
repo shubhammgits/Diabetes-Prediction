@@ -1,6 +1,6 @@
 # Diabetes Prediction Web Application
 
-![Diabetes Prediction App](./photo.jpeg)
+![Diabetes Prediction App](./image.png)
 
 A modern, responsive web application that predicts the likelihood of diabetes using machine learning algorithms. This tool analyzes medical parameters to provide instant predictions based on the Pima Indians Diabetes Database.
 
