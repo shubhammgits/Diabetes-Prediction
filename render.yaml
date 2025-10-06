@@ -32,9 +32,7 @@ services:
       else
         echo "Frontend build failed or build directory not found"
       fi
-  # Use the uvicorn CLI and the PORT env var provided by Render. This
-  # avoids issues with port binding and is the recommended way to run
-  # ASGI apps on Render.
+
   startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION

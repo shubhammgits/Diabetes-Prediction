@@ -1,8 +1,6 @@
 fastapi
 uvicorn
 pydantic
-# Pin scikit-learn to the version used when the model was saved to avoid
-# InconsistentVersionWarning and potential unpickle incompatibilities.
 scikit-learn==1.6.1
 requests
 python-multipart

@@ -28,11 +28,9 @@ class model_input(BaseModel):
     DiabetesPedigreeFunction: float
     Age: int
 
-# Try to find the base directory in different ways
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, 'retrained_model.sav')
 
-# Locate frontend build (index.html + static) if present
 FRONTEND_BUILD_DIR = None
 STATIC_DIR = None
 INDEX_HTML = None
@@ -45,18 +43,15 @@ def find_frontend_build(root_dir: str):
             stat = os.path.join(dirpath, 'static')
             candidates.append((dirpath, idx, stat))
 
-    # Prefer a candidate that also contains static/
     for c in candidates:
         if os.path.exists(c[2]):
             return c
 
-    # Otherwise return the first found index.html if any
     if candidates:
         return candidates[0]
 
     return (None, None, None)
 
-# Prefer common build locations first
 preferred_checks = [
     os.path.join(BASE_DIR, 'build'),
     os.path.join(BASE_DIR, 'frontend', 'build'),
@@ -70,16 +65,13 @@ for p in preferred_checks:
         STATIC_DIR = os.path.join(p, 'static') if os.path.exists(os.path.join(p, 'static')) else None
         break
 
-# If no usual build dirs found, check frontend/public if it has static/
 if not FRONTEND_BUILD_DIR:
-    # check frontend/public but only if it contains static/
     frontend_public = os.path.join(BASE_DIR, 'frontend', 'public')
     if os.path.exists(os.path.join(frontend_public, 'index.html')) and os.path.exists(os.path.join(frontend_public, 'static')):
         FRONTEND_BUILD_DIR = frontend_public
         INDEX_HTML = os.path.join(frontend_public, 'index.html')
         STATIC_DIR = os.path.join(frontend_public, 'static')
 
-# Final fallback: recursive search
 if not FRONTEND_BUILD_DIR:
     for root in (BASE_DIR, os.path.join(BASE_DIR, 'frontend')):
         bdir, idx, stat = find_frontend_build(root)
@@ -95,7 +87,6 @@ print(f"FRONTEND_BUILD_DIR: {FRONTEND_BUILD_DIR}")
 print(f"STATIC_DIR: {STATIC_DIR}")
 print(f"INDEX_HTML: {INDEX_HTML}")
 
-# Check if directories exist and load model
 print(f"Base directory exists: {os.path.exists(BASE_DIR)}")
 print(f"Frontend directory exists: {os.path.exists(os.path.join(BASE_DIR, 'frontend'))}")
 
@@ -114,15 +105,12 @@ print(f"Frontend build directory exists: {os.path.exists(FRONTEND_BUILD_DIR) if 
 print(f"Static directory exists: {os.path.exists(STATIC_DIR) if STATIC_DIR else False}")
 print(f"Index.html exists: {os.path.exists(INDEX_HTML) if INDEX_HTML else False}")
 
-# Find any static dir under project as fallback
 def find_any_static(root_dir: str):
-    # prefer build/static or public/static, then any folder named 'static'
     candidates = []
     for dirpath, dirnames, filenames in os.walk(root_dir):
         base = os.path.basename(dirpath).lower()
         if base == 'static' or base == 'assets':
             candidates.append(dirpath)
-        # also prefer typical build/static patterns
         if dirpath.replace('\\', '/').endswith('/build/static') or dirpath.replace('\\', '/').endswith('/public/static'):
             candidates.insert(0, dirpath)
 
@@ -219,7 +207,6 @@ async def get_photo():
 
 @app.get("/")
 async def read_index():
-    # Try to find index.html in multiple locations
     possible_paths = [
         INDEX_HTML,
         os.path.join(BASE_DIR, 'build', 'index.html'),
@@ -254,7 +241,6 @@ async def read_index():
 
 @app.get("/{full_path:path}")
 async def serve_react_app(full_path: str):
-    # Try to find index.html in multiple locations
     possible_paths = [
         INDEX_HTML,
         os.path.join(BASE_DIR, 'build', 'index.html'),
@@ -291,8 +277,7 @@ async def serve_react_app(full_path: str):
 if __name__ == "__main__":
     print("Starting Diabetes Prediction App...")
     print("Access the web application at: http://localhost:8000")
-    # Use the PORT environment variable provided by Render (or other
-    # platforms). Fall back to 8000 for local development.
+
     port = int(os.environ.get('PORT', 8000))
     print(f"Listening on 0.0.0.0:{port}")
     uvicorn.run(app, host="0.0.0.0", port=port)
