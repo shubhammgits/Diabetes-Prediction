@@ -57,6 +57,18 @@ const DiabetesPredictor = () => {
     }
   };
 
+  // Parameter information for tooltips
+  const parameterInfo = {
+    Pregnancies: "Normal Range: 0-15\nHigher values may indicate increased risk of gestational diabetes and insulin resistance.",
+    Glucose: "Normal Range: 70-99 mg/dL (fasting)\n140+ mg/dL indicates diabetes\n100-139 mg/dL indicates prediabetes",
+    BloodPressure: "Normal Range: <80 mmHg (diastolic)\nPrehypertension: 80-89 mmHg\nHigh Blood Pressure: ≥90 mmHg",
+    SkinThickness: "Normal Range: 10-50 mm\nHigher values indicate increased body fat\nTypical range: 15-35 mm for adults",
+    Insulin: "Normal Range: 2-25 μU/mL (fasting)\nPost-meal: 30-150 μU/mL\nInsulin resistance: >50 μU/mL (fasting)",
+    BMI: "Normal Range: 18.5-24.9 kg/m²\nUnderweight: <18.5\nOverweight: 25-29.9\nObese: ≥30",
+    DiabetesPedigreeFunction: "Normal Range: 0.08-2.42\nHigher values indicate stronger genetic predisposition\nAverage: 0.47",
+    Age: "Normal Range: 21-81 years (in dataset)\nRisk increases significantly after age 45\nPeak risk: 65+ years"
+  };
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -77,7 +89,7 @@ const DiabetesPredictor = () => {
   };
 
   return (
-    <div className="min-h-screen pb-20">
+    <div className="min-h-screen pb-8">
       <motion.div
         className="max-w-6xl mx-auto"
         variants={containerVariants}
@@ -112,9 +124,24 @@ const DiabetesPredictor = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {Object.keys(formData).map((key) => (
                   <div key={key} className="fade-in">
-                    <label className="label-text mb-2 block">
-                      {key.replace(/([A-Z])/g, ' $1').trim()}
-                    </label>
+                    <div className="flex items-center justify-between mb-3">
+                      <label className="label-text">
+                        {key.replace(/([A-Z])/g, ' $1').trim()}
+                      </label>
+                      <div className="relative group">
+                        <button 
+                          type="button"
+                          className="text-[#1ABC9C] hover:text-[#2EEC71] focus:outline-none w-5 h-5 flex items-center justify-center rounded-full hover:bg-[#1ABC9C]/20 transition-colors text-xs"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        </button>
+                        <div className="absolute bottom-full right-0 mb-2 w-64 p-3 bg-[#1B263B] border border-[#1ABC9C]/30 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-50">
+                          <p className="text-[#F0F2F5] text-xs whitespace-pre-line">{parameterInfo[key]}</p>
+                        </div>
+                      </div>
+                    </div>
                     <input
                       type="number"
                       name={key}
@@ -133,7 +160,7 @@ const DiabetesPredictor = () => {
               <motion.button
                 type="submit"
                 disabled={loading}
-                className="predict-button"
+                className="predict-button bg-gradient-to-r from-[#16A085] to-[#1ABC9C] flex items-center justify-center"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
@@ -146,15 +173,64 @@ const DiabetesPredictor = () => {
                     Analyzing...
                   </>
                 ) : (
-                  <>
-                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    Predict Diabetes
-                  </>
+                  'Predict Diabetes'
                 )}
               </motion.button>
             </form>
+
+            {/* About This Tool moved here */}
+            <motion.div 
+              className="about-tool-card mt-16"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <h2 className="subheading mb-4 flex items-center">
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                About This Tool
+              </h2>
+              <p className="body-text mb-4">
+                This diabetes prediction tool uses a machine learning model trained on the Pima Indians Diabetes Database to predict the likelihood of diabetes based on medical parameters. The model provides an educational demonstration of how AI can be applied to healthcare.
+              </p>
+              
+              <div className="space-y-2 mb-4">
+                <div className="flex items-start">
+                  <svg className="w-5 h-5 text-[#1ABC9C] mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <p className="body-text">Based on the Pima Indians Diabetes Database, a widely-used dataset in medical research</p>
+                </div>
+                <div className="flex items-start">
+                  <svg className="w-5 h-5 text-[#1ABC9C] mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <p className="body-text">Uses a Random Forest classifier model with 70%+ accuracy on test data</p>
+                </div>
+                <div className="flex items-start">
+                  <svg className="w-5 h-5 text-[#1ABC9C] mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <p className="body-text">Processes 8 key medical parameters to make predictions</p>
+                </div>
+                <div className="flex items-start">
+                  <svg className="w-5 h-5 text-[#1ABC9C] mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <p className="body-text">Provides instant results with detailed explanations</p>
+                </div>
+              </div>
+
+              <div className="note-box flex items-start">
+                <svg className="w-5 h-5 text-[#1ABC9C] mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p className="text-[#F0F2F5]/90 text-sm">
+                  <strong>Note:</strong> This tool is for educational purposes only and should not be used as a substitute for professional medical advice. Always consult with a healthcare provider for medical concerns.
+                </p>
+              </div>
+            </motion.div>
 
             {result && (
               <motion.div
@@ -200,37 +276,13 @@ const DiabetesPredictor = () => {
             variants={itemVariants}
           >
             <ParameterInfo />
-            
-            <motion.div 
-              className="about-tool-card"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-            >
-              <h2 className="subheading mb-4 flex items-center">
-                <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                About This Tool
-              </h2>
-              <p className="body-text mb-4">
-                This tool uses a machine learning model trained on medical data to predict the likelihood of diabetes. 
-                The prediction is based on the Pima Indians Diabetes Database, which is commonly used for diabetes research.
-              </p>
-              <div className="note-box">
-                <p className="text-[#F0F2F5]/90 text-sm flex items-center">
-                  <svg className="w-5 h-5 mr-2 text-[#1ABC9C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <strong>Note:</strong> This tool is for educational purposes only and should not be used as a substitute for professional medical advice.
-                </p>
-              </div>
-            </motion.div>
           </motion.div>
         </div>
       </motion.div>
       
-      <CreatorBadge />
+      <div className="mt-8">
+        <CreatorBadge />
+      </div>
     </div>
   );
 };
