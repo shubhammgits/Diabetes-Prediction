@@ -1,5 +1,8 @@
-# Diabetes Prediction Web Application
+# Diabetes Prediction 
 
+
+<h3>[Live](https://diabetes-prediction-lzq4.onrender.com) </h3>
+ 
 ![Diabetes Prediction App](./image.png)
 
 A modern, responsive web application that predicts the likelihood of diabetes using machine learning algorithms. This tool analyzes medical parameters to provide instant predictions based on the Pima Indians Diabetes Database.
