@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, HTMLResponse
 from pydantic import BaseModel
 import pickle
 import uvicorn
@@ -30,15 +30,41 @@ class model_input(BaseModel):
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, 'retrained_model.sav')
-FRONTEND_BUILD_DIR = os.path.join(BASE_DIR, 'frontend', 'build')
-STATIC_DIR = os.path.join(FRONTEND_BUILD_DIR, 'static')
-INDEX_HTML = os.path.join(FRONTEND_BUILD_DIR, 'index.html')
+
+POSSIBLE_BUILD_PATHS = [
+    os.path.join(BASE_DIR, 'frontend', 'build'),
+    os.path.join(BASE_DIR, 'build'),
+    'frontend/build',
+    'build'
+]
+
+FRONTEND_BUILD_DIR = None
+for path in POSSIBLE_BUILD_PATHS:
+    if os.path.exists(path):
+        FRONTEND_BUILD_DIR = path
+        break
+
+if FRONTEND_BUILD_DIR:
+    STATIC_DIR = os.path.join(FRONTEND_BUILD_DIR, 'static')
+    INDEX_HTML = os.path.join(FRONTEND_BUILD_DIR, 'index.html')
+else:
+    STATIC_DIR = None
+    INDEX_HTML = None
 
 print(f"BASE_DIR: {BASE_DIR}")
 print(f"MODEL_PATH: {MODEL_PATH}")
 print(f"FRONTEND_BUILD_DIR: {FRONTEND_BUILD_DIR}")
 print(f"STATIC_DIR: {STATIC_DIR}")
 print(f"INDEX_HTML: {INDEX_HTML}")
+
+# Check if directories exist
+print(f"Base directory exists: {os.path.exists(BASE_DIR)}")
+print(f"Frontend directory exists: {os.path.exists(os.path.join(BASE_DIR, 'frontend'))}")
+if os.path.exists(os.path.join(BASE_DIR, 'frontend')):
+    try:
+        print(f"Frontend contents: {os.listdir(os.path.join(BASE_DIR, 'frontend'))}")
+    except Exception as e:
+        print(f"Error listing frontend contents: {e}")
 
 try:
     if os.path.exists(MODEL_PATH):
@@ -51,11 +77,17 @@ except Exception as e:
     print(f"Error loading model: {e}")
     diabetes_model = None
 
-print(f"Frontend build directory exists: {os.path.exists(FRONTEND_BUILD_DIR)}")
-print(f"Static directory exists: {os.path.exists(STATIC_DIR)}")
-print(f"Index.html exists: {os.path.exists(INDEX_HTML)}")
+print(f"Frontend build directory exists: {os.path.exists(FRONTEND_BUILD_DIR) if FRONTEND_BUILD_DIR else False}")
+print(f"Static directory exists: {os.path.exists(STATIC_DIR) if STATIC_DIR else False}")
+print(f"Index.html exists: {os.path.exists(INDEX_HTML) if INDEX_HTML else False}")
 
-if os.path.exists(STATIC_DIR):
+if FRONTEND_BUILD_DIR and os.path.exists(FRONTEND_BUILD_DIR):
+    try:
+        print(f"Frontend build contents: {os.listdir(FRONTEND_BUILD_DIR)}")
+    except Exception as e:
+        print(f"Error listing build contents: {e}")
+
+if STATIC_DIR and os.path.exists(STATIC_DIR):
     app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
     print("Static files mounted successfully")
 else:
@@ -67,23 +99,23 @@ def health_check():
 
 @app.get("/debug")
 def debug_info():
-    import json
-    
     debug_info = {
         "current_working_directory": os.getcwd(),
         "base_dir": BASE_DIR,
         "model_path": MODEL_PATH,
         "model_exists": os.path.exists(MODEL_PATH),
         "frontend_build_dir": FRONTEND_BUILD_DIR,
-        "frontend_build_exists": os.path.exists(FRONTEND_BUILD_DIR),
+        "frontend_build_exists": os.path.exists(FRONTEND_BUILD_DIR) if FRONTEND_BUILD_DIR else False,
         "static_dir": STATIC_DIR,
-        "static_dir_exists": os.path.exists(STATIC_DIR),
+        "static_dir_exists": os.path.exists(STATIC_DIR) if STATIC_DIR else False,
         "index_html": INDEX_HTML,
-        "index_html_exists": os.path.exists(INDEX_HTML),
+        "index_html_exists": os.path.exists(INDEX_HTML) if INDEX_HTML else False,
         "files_in_cwd": [],
         "files_in_base_dir": [],
         "files_in_frontend": [],
-        "files_in_build": []
+        "files_in_build": [],
+        "possible_build_paths": POSSIBLE_BUILD_PATHS,
+        "path_checks": {path: os.path.exists(path) for path in POSSIBLE_BUILD_PATHS}
     }
     
     try:
@@ -104,7 +136,7 @@ def debug_info():
         pass
         
     try:
-        if os.path.exists(FRONTEND_BUILD_DIR):
+        if FRONTEND_BUILD_DIR and os.path.exists(FRONTEND_BUILD_DIR):
             debug_info["files_in_build"] = os.listdir(FRONTEND_BUILD_DIR)
     except:
         pass
@@ -155,12 +187,26 @@ async def read_index():
     ]
     
     for path in possible_paths:
-        if os.path.exists(path):
+        if path and os.path.exists(path):
             print(f"Found index.html at: {path}")
             return FileResponse(path)
     
     print("index.html not found in any of the expected locations")
-    return {"error": "Frontend build not found. Please ensure the React app is built."}
+    return HTMLResponse("""
+    <html>
+        <head><title>Diabetes Prediction App</title></head>
+        <body>
+            <h1>Diabetes Prediction App</h1>
+            <p>Application is running, but frontend build not found.</p>
+            <p>API endpoints are available at:</p>
+            <ul>
+                <li>POST /diabetes_prediction - For diabetes predictions</li>
+                <li>GET /health - Health check</li>
+                <li>GET /debug - Debug information</li>
+            </ul>
+        </body>
+    </html>
+    """)
 
 @app.get("/{full_path:path}")
 async def serve_react_app(full_path: str):
@@ -174,12 +220,26 @@ async def serve_react_app(full_path: str):
     ]
     
     for path in possible_paths:
-        if os.path.exists(path):
+        if path and os.path.exists(path):
             print(f"Found index.html at: {path}")
             return FileResponse(path)
     
     print("index.html not found in any of the expected locations")
-    return {"error": "Frontend build not found. Please ensure the React app is built."}
+    return HTMLResponse("""
+    <html>
+        <head><title>Diabetes Prediction App</title></head>
+        <body>
+            <h1>Diabetes Prediction App</h1>
+            <p>Application is running, but frontend build not found.</p>
+            <p>API endpoints are available at:</p>
+            <ul>
+                <li>POST /diabetes_prediction - For diabetes predictions</li>
+                <li>GET /health - Health check</li>
+                <li>GET /debug - Debug information</li>
+            </ul>
+        </body>
+    </html>
+    """)
 
 if __name__ == "__main__":
     print("Starting Diabetes Prediction App...")

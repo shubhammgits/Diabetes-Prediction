@@ -3,14 +3,30 @@ services:
     name: diabetes-prediction-app
     env: python
     buildCommand: |
-      cd frontend
-      npm install
-      npm run build
-      cd ..
+      # Install Python dependencies first
       pip install -r requirements.txt
+      # Build frontend with verbose output
+      cd frontend
+      echo "Installing npm dependencies..."
+      npm install
+      echo "Building frontend..."
+      npm run build
+      echo "Build completed. Checking build directory..."
+      if [ -d "build" ]; then
+        echo "Build directory exists:"
+        ls -la build/
+        echo "Index.html exists: $(test -f build/index.html && echo 'Yes' || echo 'No')"
+      else
+        echo "Build directory does not exist"
+        echo "Current directory contents:"
+        ls -la
+        echo "Node version: $(node --version)"
+        echo "NPM version: $(npm --version)"
+      fi
+      cd ..
     startCommand: python app.py
     envVars:
       - key: PYTHON_VERSION
         value: 3.9.15
       - key: NODE_VERSION
-        value: 16.14.0
+        value: 18.17.0
