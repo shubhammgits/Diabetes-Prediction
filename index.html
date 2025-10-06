@@ -208,8 +208,8 @@
     </div>
 
     <script>
-        // Use your public ngrok URL by default
-        const DEFAULT_API_URL = 'https://ac4b2077afa5.ngrok-free.app';
+        // Use the local API endpoint
+        const DEFAULT_API_URL = '/diabetes_prediction';
         
         document.getElementById('predictionForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -285,7 +285,7 @@
                 // Display error
                 const errorDiv = document.getElementById('error');
                 errorDiv.style.display = 'block';
-                errorDiv.textContent = `Error: ${error.message || 'Failed to connect to the API. Please make sure the API server is running.'}`;
+                errorDiv.textContent = `Error: ${error.message || 'Failed to connect to the API. Please make sure the server is running.'}`;
             });
         });
     </script>

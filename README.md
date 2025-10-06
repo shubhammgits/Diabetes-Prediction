@@ -1,60 +1,71 @@
 # Diabetes Prediction Web Application
 
-This is a web application that uses your public ngrok-deployed machine learning model to predict diabetes based on medical parameters.
+This is a complete web application that combines both the frontend interface and the machine learning model API in a single deployment. No more ngrok URL updates needed!
 
 ## Files in this project
 
-- `ml_api.py`: FastAPI server that serves the ML model (for your ngrok deployment)
-- `api_implementation.py`: Helper functions for API communication
-- `index.html`: Frontend web interface (configured to use your public ngrok API)
-- `web_server.py`: Server to serve the web frontend
-- `update_ngrok_url.py`: Script to update the ngrok URL when it changes
-- `deploy_webapp.py`: Simple deployment script for the web app
+- `app.py`: Combined FastAPI application that serves both the web frontend and ML model API
+- `index.html`: Frontend web interface
 - `retrained_model.sav`: Trained diabetes prediction model
 - `requirements.txt`: Python dependencies
 - `README.md`: This file
 
-## How to deploy the web application for public use
+## How to run the application locally
 
-### Step 1: Start your ngrok API server
-1. Run your Jupyter notebook or the ngrok deployment script to start your API server
-2. Note the ngrok URL that is generated (it will look like `https://abcd1234.ngrok-free.app`)
-
-### Step 2: Update the URLs in the application
-If your ngrok URL has changed from the one in the code:
-```bash
-python update_ngrok_url.py
-```
-Enter your new ngrok URL when prompted.
-
-### Step 3: Start the web server
-```bash
-# Activate virtual environment
-.\diabetes\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Start the web server
-python web_server.py
-```
-
-### Step 4: Access the web application
-Open your browser and go to `http://localhost:8080`
-
-### Step 5: Deploy publicly (optional)
-To make the web app accessible to others:
-
-1. **Using ngrok for the web app**:
+1. **Activate the virtual environment**:
    ```bash
-   # In a new terminal, after starting web_server.py
-   ngrok http 8080
+   .\diabetes\Scripts\activate
    ```
-   This will give you a public URL for the web app.
 
-2. **Using a cloud platform** (like Heroku, Render, etc.):
-   - Deploy the web_server.py application
-   - The app will automatically connect to your ngrok API
+2. **Install dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Start the application**:
+   ```bash
+   python app.py
+   ```
+
+4. **Access the web application**:
+   Open your browser and go to `http://localhost:8000`
+
+## How to deploy to a free hosting service
+
+### Option 1: Render (Recommended Free Service)
+
+1. **Sign up at [Render](https://render.com/)**
+2. **Create a new Web Service**
+3. **Connect your GitHub repository** (or upload your files)
+4. **Configure the service**:
+   - Build command: `pip install -r requirements.txt`
+   - Start command: `python app.py`
+   - Environment: Python 3
+5. **Deploy** - Render will provide you with a permanent URL
+
+### Option 2: Heroku
+
+1. **Sign up at [Heroku](https://heroku.com/)**
+2. **Install Heroku CLI**
+3. **Create a new app**:
+   ```bash
+   heroku create your-app-name
+   ```
+4. **Deploy**:
+   ```bash
+   git init
+   git add .
+   git commit -m "Initial commit"
+   heroku git:remote -a your-app-name
+   git push heroku master
+   ```
+
+### Option 3: Railway (Has free tier with limitations)
+
+1. **Sign up at [Railway](https://railway.app/)**
+2. **Create a new project**
+3. **Deploy your files**
+4. **Set the start command to `python app.py`**
 
 ## How to use the prediction tool
 
@@ -70,40 +81,30 @@ To make the web app accessible to others:
 
 2. Click "Predict" to get the result.
 
-## No local API required
+## Benefits of this approach
 
-This web application is designed to work with your public ngrok API endpoint. Users don't need to run any local servers - they just need to access the web app URL.
-
-The web app automatically connects to your ngrok API.
-
-## Customization
-
-If you need to change the API URL:
-1. Run `python update_ngrok_url.py` and enter your new URL
-2. Or manually edit [index.html](file:///c:/Users/shubh/OneDrive/Desktop/Diabetes%20Prediction%20(Fast%20API)/index.html) and [api_implementation.py](file:///c:/Users/shubh/OneDrive/Desktop/Diabetes%20Prediction%20(Fast%20API)/api_implementation.py) to update the URL
+- **No ngrok dependency**: The application is self-contained
+- **No URL updates needed**: Everything runs on the same server
+- **Easy deployment**: Single file deployment to any platform
+- **Permanent URL**: When deployed to a hosting service, you get a permanent URL
+- **Shareable**: You can share the URL with anyone
 
 ## Troubleshooting
 
-### "Failed to fetch" error
+### "Model not loaded" error
 
-This error occurs when the web app cannot connect to your ngrok API:
+Make sure the [retrained_model.sav](file:///c:/Users/shubh/OneDrive/Desktop/Diabetes%20Prediction%20(Fast%20API)/retrained_model.sav) file is in the same directory as [app.py](file:///c:/Users/shubh/OneDrive/Desktop/Diabetes%20Prediction%20(Fast%20API)/app.py)
 
-1. Make sure your ngrok API is running and accessible
-2. Check that the ngrok URL is correct and hasn't expired
-3. Update the URL using `python update_ngrok_url.py` if needed
-4. Verify the API is working by testing it directly with [api_implementation.py](file:///c:/Users/shubh/OneDrive/Desktop/Diabetes%20Prediction%20(Fast%20API)/api_implementation.py)
+### Port conflicts
 
-### Ngrok URL Expired
+If port 8000 is already in use, modify the port in [app.py](file:///c:/Users/shubh/OneDrive/Desktop/Diabetes%20Prediction%20(Fast%20API)/app.py):
+```python
+uvicorn.run(app, host="0.0.0.0", port=YOUR_PORT_NUMBER)
+```
 
-Ngrok URLs expire after a certain period. When this happens:
+## Sharing your deployed application
 
-1. Restart your ngrok API server to get a new URL
-2. Run `python update_ngrok_url.py` to update the URLs in the application
-3. Restart the web server
-
-### CORS Issues
-
-The API should already have CORS enabled. If you're still having issues:
-
-1. Make sure you're using the updated [ml_api.py](file:///c:/Users/shubh/OneDrive/Desktop/Diabetes%20Prediction%20(Fast%20API)/ml_api.py) file with CORS middleware
-2. Restart your ngrok API server after making changes
+Once deployed to a hosting service:
+1. Copy the provided URL
+2. Share it on LinkedIn, WhatsApp, or any platform
+3. Anyone with the link can use your diabetes prediction tool

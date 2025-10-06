@@ -1,9 +1,12 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 import pickle
-import json
-import numpy as np
+import uvicorn
+import os
 
+# Create the main app
 app = FastAPI()
 
 # Add CORS middleware for web app integration
@@ -11,12 +14,13 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows all origins
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],  # Allows all methods
-    allow_headers=["*"],  # Allows all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
+# Define the input model
 class model_input(BaseModel):
     Pregnancies: int
     Glucose: int
@@ -27,6 +31,7 @@ class model_input(BaseModel):
     DiabetesPedigreeFunction: float
     Age: int
 
+# Load the model
 try:
     diabetes_model = pickle.load(open('retrained_model.sav', 'rb'))
     print("Model loaded successfully")
@@ -34,10 +39,17 @@ except Exception as e:
     print(f"Error loading model: {e}")
     diabetes_model = None
 
+# Serve the index.html file
 @app.get("/")
-def read_root():
-    return {"message": "Diabetes Prediction API"}
+async def read_index():
+    return FileResponse('index.html')
 
+# Health check endpoint
+@app.get("/health")
+def health_check():
+    return {"status": "healthy"}
+
+# Prediction endpoint
 @app.post('/diabetes_prediction')
 def diabetes_pred(input_parameters: model_input):
     if diabetes_model is None:
@@ -62,3 +74,8 @@ def diabetes_pred(input_parameters: model_input):
         return {"prediction": "The Person is not Diabetic"}
     else:
         return {"prediction": "The Person is Diabetic"}
+
+if __name__ == "__main__":
+    print("Starting Diabetes Prediction App...")
+    print("Access the web application at: http://localhost:8000")
+    uvicorn.run(app, host="0.0.0.0", port=8000)
