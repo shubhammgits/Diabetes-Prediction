@@ -9,7 +9,7 @@ A modern, responsive web application that predicts the likelihood of diabetes us
 This diabetes prediction tool uses a machine learning model trained on the Pima Indians Diabetes Database to predict the likelihood of diabetes based on medical parameters. The model provides an educational demonstration of how AI can be applied to healthcare.
 
 ### Key Features:
-- **Machine Learning Model**: Uses a Random Forest classifier with 70%+ accuracy on test data
+- **Machine Learning Model**: Uses a Random Forest classifier with 80%+ accuracy on test data
 - **8 Medical Parameters**: Processes key health indicators for comprehensive analysis
 - **Instant Results**: Provides immediate predictions with detailed explanations
 - **Responsive Design**: Works seamlessly on desktop and mobile devices
@@ -164,31 +164,10 @@ Diabetes Prediction (Fast API)/
 }
 ```
 
-## 🚀 Deployment on Render
-
-1. Create a [Render](https://render.com/) account
-2. Connect your GitHub repository
-3. Create a new Web Service
-4. Configure the build command:
-   ```
-   pip install -r requirements.txt && cd frontend && npm install && npm run build && cd ..
-   ```
-5. Configure the start command:
-   ```
-   python app.py
-   ```
-6. Set environment variables if needed
-7. Deploy!
-
 ## 🤝 Connect with Me
 
 [![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/shubhammgits)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/shhshubham/)
 
-## 📄 License
 
-This project is for educational purposes only. The model and application should not be used for medical diagnosis.
-
----
-
-Made with ❤️ by [Shubham](https://github.com/shubhammgits)
+Made with by [Shubham](https://github.com/shubhammgits)
