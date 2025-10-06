@@ -6,10 +6,8 @@ import pickle
 import uvicorn
 import os
 
-# Create the main app
 app = FastAPI()
 
-# Add CORS middleware for web app integration
 from fastapi.middleware.cors import CORSMiddleware
 
 app.add_middleware(
@@ -20,7 +18,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Define the input model
 class model_input(BaseModel):
     Pregnancies: int
     Glucose: int
@@ -31,7 +28,6 @@ class model_input(BaseModel):
     DiabetesPedigreeFunction: float
     Age: int
 
-# Load the model
 try:
     diabetes_model = pickle.load(open('retrained_model.sav', 'rb'))
     print("Model loaded successfully")
@@ -39,17 +35,14 @@ except Exception as e:
     print(f"Error loading model: {e}")
     diabetes_model = None
 
-# Serve the index.html file
 @app.get("/")
 async def read_index():
     return FileResponse('index.html')
 
-# Health check endpoint
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
 
-# Prediction endpoint
 @app.post('/diabetes_prediction')
 def diabetes_pred(input_parameters: model_input):
     if diabetes_model is None:

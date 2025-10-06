@@ -208,20 +208,16 @@
     </div>
 
     <script>
-        // Use the local API endpoint
         const DEFAULT_API_URL = '/diabetes_prediction';
         
         document.getElementById('predictionForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            // Hide previous results and errors
             document.getElementById('result').style.display = 'none';
             document.getElementById('error').style.display = 'none';
             
-            // Show loading indicator
             document.getElementById('loading').style.display = 'block';
             
-            // Get form values
             const inputData = {
                 Pregnancies: parseInt(document.getElementById('pregnancies').value),
                 Glucose: parseInt(document.getElementById('glucose').value),
@@ -233,10 +229,6 @@
                 Age: parseInt(document.getElementById('age').value)
             };
             
-            console.log('Sending request to:', DEFAULT_API_URL);
-            console.log('Input data:', inputData);
-            
-            // Send request to API
             fetch(DEFAULT_API_URL, {
                 method: 'POST',
                 headers: {
@@ -245,18 +237,14 @@
                 body: JSON.stringify(inputData)
             })
             .then(response => {
-                console.log('Response status:', response.status);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 return response.json();
             })
             .then(data => {
-                console.log('Response data:', data);
-                // Hide loading indicator
                 document.getElementById('loading').style.display = 'none';
                 
-                // Display result
                 const resultDiv = document.getElementById('result');
                 resultDiv.style.display = 'block';
                 
@@ -268,7 +256,6 @@
                         resultDiv.className = 'result diabetic';
                     }
                 } else {
-                    // For your current API format
                     resultDiv.textContent = data;
                     if (data.includes('not')) {
                         resultDiv.className = 'result non-diabetic';
@@ -278,11 +265,8 @@
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                // Hide loading indicator
                 document.getElementById('loading').style.display = 'none';
                 
-                // Display error
                 const errorDiv = document.getElementById('error');
                 errorDiv.style.display = 'block';
                 errorDiv.textContent = `Error: ${error.message || 'Failed to connect to the API. Please make sure the server is running.'}`;
