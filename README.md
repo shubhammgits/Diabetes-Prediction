@@ -1,7 +1,7 @@
 # Diabetes Prediction 
 
 
-<h3>[Live](https://diabetes-prediction-lzq4.onrender.com) </h3>
+<h3>Live : (https://diabetes-prediction-lzq4.onrender.com) </h3>
  
 ![Diabetes Prediction App](./image.png)
 
