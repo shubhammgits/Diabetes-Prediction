@@ -2,8 +2,15 @@ services:
   - type: web
     name: diabetes-prediction-app
     env: python
-    buildCommand: pip install -r requirements.txt
+    buildCommand: |
+      cd frontend
+      npm install
+      npm run build
+      cd ..
+      pip install -r requirements.txt
     startCommand: python app.py
     envVars:
       - key: PYTHON_VERSION
         value: 3.9.15
+      - key: NODE_VERSION
+        value: 16.14.0

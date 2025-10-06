@@ -56,7 +56,6 @@ const DiabetesPredictor = () => {
     }
   };
 
-  // Parameter information for tooltips
   const parameterInfo = {
     Pregnancies: "Normal Range: 0-15\nHigher values may indicate increased risk of gestational diabetes and insulin resistance.",
     Glucose: "Normal Range: 70-99 mg/dL (fasting)\n140+ mg/dL indicates diabetes\n100-139 mg/dL indicates prediabetes",
@@ -216,7 +215,6 @@ const DiabetesPredictor = () => {
             )}
           </motion.div>
 
-          {/* About This Tool section - on the right side on large screens, below on small screens */}
           <motion.div 
             className="about-tool-card lg:mt-0"
             variants={itemVariants}
@@ -269,7 +267,6 @@ const DiabetesPredictor = () => {
           </motion.div>
         </div>
 
-        {/* Parameter Information section - always below the main content */}
         <motion.div 
           className="parameter-information-card mt-8"
           initial={{ opacity: 0, y: 20 }}

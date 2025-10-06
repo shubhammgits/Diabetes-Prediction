@@ -63,7 +63,8 @@ The model is trained on the **Pima Indians Diabetes Database**, a widely-used da
 Diabetes Prediction (Fast API)/
 ├── app.py                 # FastAPI backend server
 ├── requirements.txt       # Python dependencies
-├── balanced_diabetes_dataset.csv  # Training dataset
+├── runtime.txt            # Python runtime version for Render
+├── render.yaml            # Render deployment configuration
 ├── retrained_model.sav    # Trained ML model (pickle file)
 ├── photo.jpeg             # Creator's photo
 ├── frontend/              # React frontend application
@@ -80,8 +81,8 @@ Diabetes Prediction (Fast API)/
 ### Prerequisites
 
 - Python 3.7+
-- Node.js 14+
-- npm 6+
+- Node.js 14+ (for development only)
+- npm 6+ (for development only)
 
 ### Installation
 
@@ -106,7 +107,7 @@ Diabetes Prediction (Fast API)/
    pip install -r requirements.txt
    ```
 
-3. **Set up the React frontend:**
+3. **Set up the React frontend (for development only):**
    ```bash
    # Navigate to frontend directory
    cd frontend
@@ -123,7 +124,7 @@ Diabetes Prediction (Fast API)/
    cd ..
    ```
 
-### Running the Application
+### Running the Application Locally
 
 1. **Start the FastAPI server:**
    ```bash
@@ -138,6 +139,7 @@ Diabetes Prediction (Fast API)/
 - `GET /` - Serve the React frontend
 - `POST /diabetes_prediction` - Submit medical parameters for prediction
 - `GET /health` - Health check endpoint
+- `GET /debug` - Debug information about file paths (for troubleshooting)
 
 ### Prediction Endpoint
 
@@ -169,5 +171,4 @@ Diabetes Prediction (Fast API)/
 [![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/shubhammgits)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/shhshubham/)
 
-
-Made with by [Shubham](https://github.com/shubhammgits)
+Made with ❤️ by [Shubham](https://github.com/shubhammgits)
