@@ -40,7 +40,7 @@ const DiabetesPredictor = () => {
         Glucose: parseInt(formData.Glucose) || 0,
         BloodPressure: parseInt(formData.BloodPressure) || 0,
         SkinThickness: parseInt(formData.SkinThickness) || 0,
-        Insulin: parseInt(formData.Inulin) || 0,
+        Insulin: parseInt(formData.Insulin) || 0,
         BMI: parseFloat(formData.BMI) || 0,
         DiabetesPedigreeFunction: parseFloat(formData.DiabetesPedigreeFunction) || 0,
         Age: parseInt(formData.Age) || 0
@@ -100,7 +100,7 @@ const DiabetesPredictor = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <motion.div 
-            className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-2xl p-6 shadow-2xl border border-amber-200"
+            className="bg-gradient-to-br from-stone-200/25 to-stone-300/25 backdrop-blur-sm rounded-2xl p-6 shadow-2xl border border-stone-400/25"
             variants={itemVariants}
           >
             <h2 className="text-2xl font-bold text-[#05668D] mb-6 flex items-center">
@@ -125,7 +125,7 @@ const DiabetesPredictor = () => {
                       required
                       min="0"
                       step={key === 'BMI' || key === 'DiabetesPedigreeFunction' ? '0.01' : '1'}
-                      className="w-full px-4 py-3 bg-amber-50/50 border border-amber-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#02C39A] focus:border-transparent text-[#05668D] placeholder-[#05668D]/60 transition-all duration-300"
+                      className="w-full px-4 py-3 bg-stone-200/40 border border-stone-400/40 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#02C39A] focus:border-transparent text-[#05668D] placeholder-[#05668D]/70 transition-all duration-300"
                       placeholder={`Enter ${key.replace(/([A-Z])/g, ' $1').trim()}`}
                     />
                   </div>
@@ -162,9 +162,9 @@ const DiabetesPredictor = () => {
               <motion.div
                 className={`mt-6 p-6 rounded-xl border-2 ${
                   result.includes('not') 
-                    ? 'bg-green-50 border-green-200 text-green-800' 
-                    : 'bg-red-50 border-red-200 text-red-800'
-                }`}
+                    ? 'bg-green-100/40 border-green-300/40 text-green-800' 
+                    : 'bg-red-100/40 border-red-300/40 text-red-800'
+                } backdrop-blur-sm`}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
@@ -181,7 +181,7 @@ const DiabetesPredictor = () => {
 
             {error && (
               <motion.div
-                className="mt-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-800"
+                className="mt-6 p-4 bg-red-100/40 border border-red-300/40 rounded-xl text-red-800 backdrop-blur-sm"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
@@ -204,7 +204,7 @@ const DiabetesPredictor = () => {
             <ParameterInfo />
             
             <motion.div 
-              className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-2xl p-6 shadow-2xl border border-amber-200"
+              className="bg-gradient-to-br from-stone-200/25 to-stone-300/25 backdrop-blur-sm rounded-2xl p-6 shadow-2xl border border-stone-400/25"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}

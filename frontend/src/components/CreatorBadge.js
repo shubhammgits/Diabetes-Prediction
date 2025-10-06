@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 const CreatorBadge = () => {
   return (
     <motion.div 
-      className="fixed bottom-6 right-6 flex items-center bg-amber-100/80 backdrop-blur-sm rounded-full px-4 py-2 border border-amber-200 shadow-lg"
+      className="fixed bottom-6 right-6 flex items-center bg-amber-200/70 backdrop-blur-sm rounded-full px-4 py-2 border border-amber-300/50 shadow-lg"
       initial={{ opacity: 0, x: 50 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: 1 }}

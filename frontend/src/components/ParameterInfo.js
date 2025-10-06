@@ -54,7 +54,7 @@ const ParameterInfo = () => {
   ];
 
   return (
-    <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-2xl p-6 shadow-2xl border border-amber-200">
+    <div className="bg-gradient-to-br from-stone-200/25 to-stone-300/25 backdrop-blur-sm rounded-2xl p-6 shadow-2xl border border-stone-400/25">
       <h2 className="text-2xl font-bold text-[#05668D] mb-6 flex items-center">
         <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -71,7 +71,7 @@ const ParameterInfo = () => {
             transition={{ duration: 0.3 }}
           >
             <div className="flex items-start">
-              <div className={`flex-shrink-0 w-12 h-12 rounded-lg ${param.color} flex items-center justify-center text-[#05668D] text-xl mr-4`}>
+              <div className={`flex-shrink-0 w-12 h-12 rounded-lg ${param.color} flex items-center justify-center text-[#05668D] text-xl mr-4 border border-stone-400/30`}>
                 {param.icon}
               </div>
               <div>
