@@ -6,16 +6,16 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'primary-dark': '#05668D',
-        'primary': '#028090',
-        'secondary': '#00A896',
-        'accent': '#02C39A',
-        'light': '#F0F3BD'
+        'primary-dark': '#0D1B2A',
+        'primary': '#1B263B',
+        'secondary': '#1ABC9C',
+        'accent': '#2EEC71',
+        'light': '#F0F2F5',
+        'muted': '#B0B3B8'
       },
       fontFamily: {
-        'sans': ['Open Sans', 'Lato', 'sans-serif'],
-        'open-sans': ['Open Sans', 'sans-serif'],
-        'lato': ['Lato', 'sans-serif']
+        'sans': ['Poppins', 'sans-serif'],
+        'poppins': ['Poppins', 'sans-serif']
       },
       animation: {
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',

@@ -77,7 +77,7 @@ const DiabetesPredictor = () => {
   };
 
   return (
-    <div className="min-h-screen py-8">
+    <div className="min-h-screen pb-20">
       <motion.div
         className="max-w-6xl mx-auto"
         variants={containerVariants}
@@ -85,25 +85,23 @@ const DiabetesPredictor = () => {
         animate="visible"
       >
         <motion.div 
-          className="text-center mb-12"
+          className="text-center mb-12 pt-8"
           variants={itemVariants}
         >
-          <h1 className="text-4xl md:text-5xl font-bold text-[#F0F3BD] mb-4 drop-shadow-lg">
-            <span className="text-[#F0F3BD]">
-              Diabetes Prediction
-            </span>
+          <h1 className="main-heading mb-4 drop-shadow-lg">
+            Diabetes Prediction
           </h1>
-          <p className="text-xl text-[#F0F3BD]/90 max-w-2xl mx-auto">
+          <p className="text-xl text-[#F0F2F5]/90 max-w-2xl mx-auto body-text">
             Enter your medical parameters to predict the likelihood of diabetes using advanced machine learning
           </p>
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <motion.div 
-            className="bg-gradient-to-br from-stone-200/25 to-stone-300/25 backdrop-blur-sm rounded-2xl p-6 shadow-2xl border border-stone-400/25"
+            className="medical-parameters-card"
             variants={itemVariants}
           >
-            <h2 className="text-2xl font-bold text-[#05668D] mb-6 flex items-center">
+            <h2 className="subheading mb-6 flex items-center">
               <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
@@ -114,7 +112,7 @@ const DiabetesPredictor = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {Object.keys(formData).map((key) => (
                   <div key={key} className="fade-in">
-                    <label className="block text-[#05668D] text-sm font-medium mb-2">
+                    <label className="label-text mb-2 block">
                       {key.replace(/([A-Z])/g, ' $1').trim()}
                     </label>
                     <input
@@ -125,7 +123,7 @@ const DiabetesPredictor = () => {
                       required
                       min="0"
                       step={key === 'BMI' || key === 'DiabetesPedigreeFunction' ? '0.01' : '1'}
-                      className="w-full px-4 py-3 bg-stone-200/40 border border-stone-400/40 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#02C39A] focus:border-transparent text-[#05668D] placeholder-[#05668D]/70 transition-all duration-300"
+                      className="glass-input w-full"
                       placeholder={`Enter ${key.replace(/([A-Z])/g, ' $1').trim()}`}
                     />
                   </div>
@@ -135,7 +133,7 @@ const DiabetesPredictor = () => {
               <motion.button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-[#02C39A] to-[#00A896] hover:from-[#00A896] hover:to-[#028090] text-white font-bold py-4 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                className="predict-button"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
@@ -162,8 +160,8 @@ const DiabetesPredictor = () => {
               <motion.div
                 className={`mt-6 p-6 rounded-xl border-2 ${
                   result.includes('not') 
-                    ? 'bg-green-100/40 border-green-300/40 text-green-800' 
-                    : 'bg-red-100/40 border-red-300/40 text-red-800'
+                    ? 'bg-green-500/20 border-green-500/30 text-[#F0F2F5]' 
+                    : 'bg-red-500/20 border-red-500/30 text-[#F0F2F5]'
                 } backdrop-blur-sm`}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -181,7 +179,7 @@ const DiabetesPredictor = () => {
 
             {error && (
               <motion.div
-                className="mt-6 p-4 bg-red-100/40 border border-red-300/40 rounded-xl text-red-800 backdrop-blur-sm"
+                className="mt-6 p-4 bg-red-500/20 border border-red-500/30 rounded-xl text-[#F0F2F5] backdrop-blur-sm"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
@@ -204,32 +202,35 @@ const DiabetesPredictor = () => {
             <ParameterInfo />
             
             <motion.div 
-              className="bg-gradient-to-br from-stone-200/25 to-stone-300/25 backdrop-blur-sm rounded-2xl p-6 shadow-2xl border border-stone-400/25"
+              className="about-tool-card"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
             >
-              <h2 className="text-2xl font-bold text-[#05668D] mb-4 flex items-center">
+              <h2 className="subheading mb-4 flex items-center">
                 <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 About This Tool
               </h2>
-              <p className="text-[#05668D]/80 mb-4">
+              <p className="body-text mb-4">
                 This tool uses a machine learning model trained on medical data to predict the likelihood of diabetes. 
                 The prediction is based on the Pima Indians Diabetes Database, which is commonly used for diabetes research.
               </p>
-              <div className="bg-[#02C39A]/20 border border-[#02C39A]/30 rounded-lg p-4">
-                <p className="text-[#05668D]/90 text-sm">
+              <div className="note-box">
+                <p className="text-[#F0F2F5]/90 text-sm flex items-center">
+                  <svg className="w-5 h-5 mr-2 text-[#1ABC9C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
                   <strong>Note:</strong> This tool is for educational purposes only and should not be used as a substitute for professional medical advice.
                 </p>
               </div>
             </motion.div>
           </motion.div>
         </div>
-
-        <CreatorBadge />
       </motion.div>
+      
+      <CreatorBadge />
     </div>
   );
 };
