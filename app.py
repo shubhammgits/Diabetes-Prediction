@@ -33,27 +33,47 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, 'retrained_model.sav')
 
 # Try multiple possible locations for frontend build
-POSSIBLE_BUILD_PATHS = [
-    os.path.join(BASE_DIR, 'build'),  # This is where we copy the build to
-    os.path.join(BASE_DIR, 'frontend', 'build'),
-    os.path.join(BASE_DIR, 'frontend-build'),
-    'build',
-    'frontend/build',
-    'frontend-build'
-]
-
+# Try multiple possible locations for frontend build. Instead of only
+# checking a few fixed paths, walk the tree and pick the first directory
+# that contains an index.html (and preferably a static/ folder). This
+# is more robust for render where the build location may vary or be
+# nested.
 FRONTEND_BUILD_DIR = None
-for path in POSSIBLE_BUILD_PATHS:
-    if os.path.exists(path):
-        FRONTEND_BUILD_DIR = path
-        break
+STATIC_DIR = None
+INDEX_HTML = None
 
-if FRONTEND_BUILD_DIR:
-    STATIC_DIR = os.path.join(FRONTEND_BUILD_DIR, 'static')
-    INDEX_HTML = os.path.join(FRONTEND_BUILD_DIR, 'index.html')
-else:
-    STATIC_DIR = None
-    INDEX_HTML = None
+def find_frontend_build(root_dir: str):
+    """Search recursively under root_dir for a directory that looks
+    like a React build (contains index.html). Prefer directories that
+    also have a static/ folder next to index.html.
+    Returns (build_dir, index_html_path, static_dir) or (None, None, None).
+    """
+    candidates = []
+    for dirpath, dirnames, filenames in os.walk(root_dir):
+        if 'index.html' in filenames:
+            idx = os.path.join(dirpath, 'index.html')
+            stat = os.path.join(dirpath, 'static')
+            candidates.append((dirpath, idx, stat))
+
+    # Prefer a candidate that also contains static/ (the typical React build)
+    for c in candidates:
+        if os.path.exists(c[2]):
+            return c
+
+    # Otherwise return the first found index.html if any
+    if candidates:
+        return candidates[0]
+
+    return (None, None, None)
+
+# Search common root locations: repo root and frontend folder
+for root in (BASE_DIR, os.path.join(BASE_DIR, 'frontend')):
+    bdir, idx, stat = find_frontend_build(root)
+    if bdir:
+        FRONTEND_BUILD_DIR = bdir
+        INDEX_HTML = idx
+        STATIC_DIR = stat if os.path.exists(stat) else None
+        break
 
 print(f"BASE_DIR: {BASE_DIR}")
 print(f"MODEL_PATH: {MODEL_PATH}")
@@ -228,4 +248,8 @@ async def serve_react_app(full_path: str):
 if __name__ == "__main__":
     print("Starting Diabetes Prediction App...")
     print("Access the web application at: http://localhost:8000")
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    # Use the PORT environment variable provided by Render (or other
+    # platforms). Fall back to 8000 for local development.
+    port = int(os.environ.get('PORT', 8000))
+    print(f"Listening on 0.0.0.0:{port}")
+    uvicorn.run(app, host="0.0.0.0", port=port)
