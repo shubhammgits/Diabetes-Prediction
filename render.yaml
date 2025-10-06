@@ -3,38 +3,25 @@ services:
     name: diabetes-prediction-app
     env: python
     buildCommand: |
-      # Install Python dependencies first
+      # Install Python dependencies
       pip install -r requirements.txt
-      # Build frontend
+      
+      # Install Node.js dependencies and build frontend
       cd frontend
-      echo "=== BUILD DIAGNOSTICS ==="
-      echo "Node version: $(node --version)"
-      echo "NPM version: $(npm --version)"
-      echo "Current directory: $(pwd)"
-      echo "Contents of current directory:"
-      ls -la
-      echo "=== INSTALLING DEPENDENCIES ==="
       npm install
-      echo "=== BUILDING FRONTEND ==="
       npm run build
-      echo "=== BUILD COMPLETE ==="
-      echo "Contents after build:"
-      ls -la
+      
+      # Copy build to a location accessible by the Python app
       if [ -d "build" ]; then
-        echo "Build directory exists:"
-        ls -la build/
-        echo "Copying build to root directory..."
-        cp -r build ../frontend-build
-      else
-        echo "ERROR: Build directory not found!"
-        echo "This is likely the cause of the frontend not loading."
+        cp -r build ../build
       fi
       cd ..
-      echo "=== ROOT DIRECTORY CONTENTS ==="
-      ls -la
-      if [ -d "frontend-build" ]; then
-        echo "Frontend build successfully copied to root:"
-        ls -la frontend-build/
+      
+      # Verify build was copied
+      if [ -d "build" ]; then
+        echo "Frontend build successful and copied to root directory"
+      else
+        echo "Frontend build failed or build directory not found"
       fi
     startCommand: python app.py
     envVars:

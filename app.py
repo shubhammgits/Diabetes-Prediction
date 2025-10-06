@@ -34,11 +34,11 @@ MODEL_PATH = os.path.join(BASE_DIR, 'retrained_model.sav')
 
 # Try multiple possible locations for frontend build
 POSSIBLE_BUILD_PATHS = [
+    os.path.join(BASE_DIR, 'build'),  # This is where we copy the build to
     os.path.join(BASE_DIR, 'frontend', 'build'),
-    os.path.join(BASE_DIR, 'build'),
     os.path.join(BASE_DIR, 'frontend-build'),
-    'frontend/build',
     'build',
+    'frontend/build',
     'frontend-build'
 ]
 
@@ -64,11 +64,6 @@ print(f"INDEX_HTML: {INDEX_HTML}")
 # Check if directories exist
 print(f"Base directory exists: {os.path.exists(BASE_DIR)}")
 print(f"Frontend directory exists: {os.path.exists(os.path.join(BASE_DIR, 'frontend'))}")
-if os.path.exists(os.path.join(BASE_DIR, 'frontend')):
-    try:
-        print(f"Frontend contents: {os.listdir(os.path.join(BASE_DIR, 'frontend'))}")
-    except Exception as e:
-        print(f"Error listing frontend contents: {e}")
 
 try:
     if os.path.exists(MODEL_PATH):
@@ -84,12 +79,6 @@ except Exception as e:
 print(f"Frontend build directory exists: {os.path.exists(FRONTEND_BUILD_DIR) if FRONTEND_BUILD_DIR else False}")
 print(f"Static directory exists: {os.path.exists(STATIC_DIR) if STATIC_DIR else False}")
 print(f"Index.html exists: {os.path.exists(INDEX_HTML) if INDEX_HTML else False}")
-
-if FRONTEND_BUILD_DIR and os.path.exists(FRONTEND_BUILD_DIR):
-    try:
-        print(f"Frontend build contents: {os.listdir(FRONTEND_BUILD_DIR)}")
-    except Exception as e:
-        print(f"Error listing build contents: {e}")
 
 if STATIC_DIR and os.path.exists(STATIC_DIR):
     app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
@@ -116,8 +105,6 @@ def debug_info():
         "index_html_exists": os.path.exists(INDEX_HTML) if INDEX_HTML else False,
         "files_in_cwd": [],
         "files_in_base_dir": [],
-        "files_in_frontend": [],
-        "files_in_build": [],
         "possible_build_paths": POSSIBLE_BUILD_PATHS,
         "path_checks": {path: os.path.exists(path) for path in POSSIBLE_BUILD_PATHS}
     }
@@ -129,19 +116,6 @@ def debug_info():
         
     try:
         debug_info["files_in_base_dir"] = os.listdir(BASE_DIR)
-    except:
-        pass
-        
-    try:
-        frontend_path = os.path.join(BASE_DIR, 'frontend')
-        if os.path.exists(frontend_path):
-            debug_info["files_in_frontend"] = os.listdir(frontend_path)
-    except:
-        pass
-        
-    try:
-        if FRONTEND_BUILD_DIR and os.path.exists(FRONTEND_BUILD_DIR):
-            debug_info["files_in_build"] = os.listdir(FRONTEND_BUILD_DIR)
     except:
         pass
     
@@ -184,11 +158,11 @@ async def read_index():
     # Try to find index.html in multiple locations
     possible_paths = [
         INDEX_HTML,
-        os.path.join(BASE_DIR, 'frontend', 'build', 'index.html'),
         os.path.join(BASE_DIR, 'build', 'index.html'),
+        os.path.join(BASE_DIR, 'frontend', 'build', 'index.html'),
         os.path.join(BASE_DIR, 'frontend-build', 'index.html'),
-        'frontend/build/index.html',
         'build/index.html',
+        'frontend/build/index.html',
         'frontend-build/index.html',
         'index.html'
     ]
@@ -220,11 +194,11 @@ async def serve_react_app(full_path: str):
     # Try to find index.html in multiple locations
     possible_paths = [
         INDEX_HTML,
-        os.path.join(BASE_DIR, 'frontend', 'build', 'index.html'),
         os.path.join(BASE_DIR, 'build', 'index.html'),
+        os.path.join(BASE_DIR, 'frontend', 'build', 'index.html'),
         os.path.join(BASE_DIR, 'frontend-build', 'index.html'),
-        'frontend/build/index.html',
         'build/index.html',
+        'frontend/build/index.html',
         'frontend-build/index.html',
         'index.html'
     ]
