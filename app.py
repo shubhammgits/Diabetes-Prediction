@@ -100,11 +100,33 @@ print(f"Frontend build directory exists: {os.path.exists(FRONTEND_BUILD_DIR) if 
 print(f"Static directory exists: {os.path.exists(STATIC_DIR) if STATIC_DIR else False}")
 print(f"Index.html exists: {os.path.exists(INDEX_HTML) if INDEX_HTML else False}")
 
+# If STATIC_DIR wasn't found next to the detected index.html, try a
+# broader search for common static directories under the project so
+# deployments that place assets in different locations still work.
+def find_any_static(root_dir: str):
+    # prefer build/static or public/static, then any folder named 'static'
+    candidates = []
+    for dirpath, dirnames, filenames in os.walk(root_dir):
+        base = os.path.basename(dirpath).lower()
+        if base == 'static' or base == 'assets':
+            candidates.append(dirpath)
+        # also prefer typical build/static patterns
+        if dirpath.replace('\\', '/').endswith('/build/static') or dirpath.replace('\\', '/').endswith('/public/static'):
+            candidates.insert(0, dirpath)
+
+    return candidates[0] if candidates else None
+
 if STATIC_DIR and os.path.exists(STATIC_DIR):
     app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
-    print("Static files mounted successfully")
+    print(f"Static files mounted successfully from: {STATIC_DIR}")
 else:
-    print("Static files directory not found")
+    fallback_static = find_any_static(BASE_DIR)
+    if fallback_static and os.path.exists(fallback_static):
+        STATIC_DIR = fallback_static
+        app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+        print(f"Static files mounted from fallback location: {STATIC_DIR}")
+    else:
+        print("Static files directory not found")
 
 @app.get("/health")
 def health_check():
@@ -112,6 +134,17 @@ def health_check():
 
 @app.get("/debug")
 def debug_info():
+    possible_build_paths = [
+        os.path.join(BASE_DIR, 'build'),
+        os.path.join(BASE_DIR, 'frontend', 'build'),
+        os.path.join(BASE_DIR, 'frontend-build'),
+        os.path.join(BASE_DIR, 'frontend', 'public'),
+        'build',
+        'frontend/build',
+        'frontend-build',
+        'index.html'
+    ]
+
     debug_info = {
         "current_working_directory": os.getcwd(),
         "base_dir": BASE_DIR,
@@ -125,8 +158,8 @@ def debug_info():
         "index_html_exists": os.path.exists(INDEX_HTML) if INDEX_HTML else False,
         "files_in_cwd": [],
         "files_in_base_dir": [],
-        "possible_build_paths": POSSIBLE_BUILD_PATHS,
-        "path_checks": {path: os.path.exists(path) for path in POSSIBLE_BUILD_PATHS}
+        "possible_build_paths": possible_build_paths,
+        "path_checks": {path: os.path.exists(path) for path in possible_build_paths}
     }
     
     try:
