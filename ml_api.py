@@ -6,6 +6,17 @@ import numpy as np
 
 app = FastAPI()
 
+# Add CORS middleware for web app integration
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
+
 class model_input(BaseModel):
     Pregnancies: int
     Glucose: int
@@ -23,11 +34,14 @@ except Exception as e:
     print(f"Error loading model: {e}")
     diabetes_model = None
 
+@app.get("/")
+def read_root():
+    return {"message": "Diabetes Prediction API"}
+
 @app.post('/diabetes_prediction')
 def diabetes_pred(input_parameters: model_input):
     if diabetes_model is None:
         return {"error": "Model not loaded"}
-    
 
     input_dictionary = input_parameters.dict()
     
@@ -45,6 +59,6 @@ def diabetes_pred(input_parameters: model_input):
     prediction = diabetes_model.predict(input_list)
     
     if prediction[0] == 0:
-        return 'The Person is not Diabetic'
+        return {"prediction": "The Person is not Diabetic"}
     else:
-        return 'The Person is Diabetic'
+        return {"prediction": "The Person is Diabetic"}
