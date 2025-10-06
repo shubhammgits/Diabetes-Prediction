@@ -35,19 +35,7 @@ except Exception as e:
     print(f"Error loading model: {e}")
     diabetes_model = None
 
-# Serve React frontend
-@app.get("/")
-async def read_index():
-    # Check if React build exists
-    if os.path.exists("frontend/build/index.html"):
-        return FileResponse('frontend/build/index.html')
-    # Fallback to old HTML if React build doesn't exist
-    return FileResponse('index.html')
-
-# Serve static files for React
-if os.path.exists("frontend/build/static"):
-    app.mount("/static", StaticFiles(directory="frontend/build/static"), name="static")
-
+# API Routes (must be defined before catch-all routes)
 @app.get("/health")
 def health_check():
     return {"status": "healthy"}
@@ -77,7 +65,20 @@ def diabetes_pred(input_parameters: model_input):
     else:
         return {"prediction": "The Person is Diabetic"}
 
-# Fallback for React Router
+# Serve React frontend (catch-all routes should be last)
+# Serve static files for React
+if os.path.exists("frontend/build/static"):
+    app.mount("/static", StaticFiles(directory="frontend/build/static"), name="static")
+
+@app.get("/")
+async def read_index():
+    # Check if React build exists
+    if os.path.exists("frontend/build/index.html"):
+        return FileResponse('frontend/build/index.html')
+    # Fallback to old HTML if React build doesn't exist
+    return FileResponse('index.html')
+
+# Fallback for React Router (must be the last route)
 @app.get("/{full_path:path}")
 async def serve_react_app(full_path: str):
     if os.path.exists("frontend/build/index.html"):
