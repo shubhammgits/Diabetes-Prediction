@@ -11,9 +11,18 @@ services:
       npm install
       npm run build
       
-      # Copy build to a location accessible by the Python app
+      # Copy build to a location accessible by the Python app.
+      # Prefer the react-scripts build output (build/). As a fallback,
+      # copy frontend/public (some setups put prebuilt assets there).
       if [ -d "build" ]; then
         cp -r build ../build
+      elif [ -d "public" ]; then
+        # Sometimes the deployed frontend files are in `public` (unusual for CRA,
+        # but safe to support). Copy them into ../build so the Python app can
+        # serve them from the expected location.
+        cp -r public ../build
+      else
+        echo "No frontend build or public directory found in frontend"
       fi
       cd ..
       

@@ -67,13 +67,43 @@ def find_frontend_build(root_dir: str):
     return (None, None, None)
 
 # Search common root locations: repo root and frontend folder
-for root in (BASE_DIR, os.path.join(BASE_DIR, 'frontend')):
-    bdir, idx, stat = find_frontend_build(root)
-    if bdir:
-        FRONTEND_BUILD_DIR = bdir
+# First prefer common build locations explicitly (this prevents accidentally
+# picking up frontend/public/index.html which is a source template, not a
+# production build). Only accept frontend/public if it contains a static
+# folder (i.e. looks like a built site).
+preferred_checks = [
+    os.path.join(BASE_DIR, 'build'),
+    os.path.join(BASE_DIR, 'frontend', 'build'),
+]
+
+for p in preferred_checks:
+    idx = os.path.join(p, 'index.html')
+    if os.path.exists(idx):
+        FRONTEND_BUILD_DIR = p
         INDEX_HTML = idx
-        STATIC_DIR = stat if os.path.exists(stat) else None
+        STATIC_DIR = os.path.join(p, 'static') if os.path.exists(os.path.join(p, 'static')) else None
         break
+
+# If we didn't find the usual build directories, search inside frontend
+# but avoid using frontend/public/index.html unless it has static assets.
+if not FRONTEND_BUILD_DIR:
+    # check frontend/public but only if it contains static/
+    frontend_public = os.path.join(BASE_DIR, 'frontend', 'public')
+    if os.path.exists(os.path.join(frontend_public, 'index.html')) and os.path.exists(os.path.join(frontend_public, 'static')):
+        FRONTEND_BUILD_DIR = frontend_public
+        INDEX_HTML = os.path.join(frontend_public, 'index.html')
+        STATIC_DIR = os.path.join(frontend_public, 'static')
+
+# As a final fallback, do a recursive search for any index.html (prefers folders
+# that have static/ because find_frontend_build checks for that first).
+if not FRONTEND_BUILD_DIR:
+    for root in (BASE_DIR, os.path.join(BASE_DIR, 'frontend')):
+        bdir, idx, stat = find_frontend_build(root)
+        if bdir:
+            FRONTEND_BUILD_DIR = bdir
+            INDEX_HTML = idx
+            STATIC_DIR = stat if os.path.exists(stat) else None
+            break
 
 print(f"BASE_DIR: {BASE_DIR}")
 print(f"MODEL_PATH: {MODEL_PATH}")
