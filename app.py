@@ -32,22 +32,12 @@ class model_input(BaseModel):
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, 'retrained_model.sav')
 
-# Try multiple possible locations for frontend build
-# Try multiple possible locations for frontend build. Instead of only
-# checking a few fixed paths, walk the tree and pick the first directory
-# that contains an index.html (and preferably a static/ folder). This
-# is more robust for render where the build location may vary or be
-# nested.
+# Locate frontend build (index.html + static) if present
 FRONTEND_BUILD_DIR = None
 STATIC_DIR = None
 INDEX_HTML = None
 
 def find_frontend_build(root_dir: str):
-    """Search recursively under root_dir for a directory that looks
-    like a React build (contains index.html). Prefer directories that
-    also have a static/ folder next to index.html.
-    Returns (build_dir, index_html_path, static_dir) or (None, None, None).
-    """
     candidates = []
     for dirpath, dirnames, filenames in os.walk(root_dir):
         if 'index.html' in filenames:
@@ -55,7 +45,7 @@ def find_frontend_build(root_dir: str):
             stat = os.path.join(dirpath, 'static')
             candidates.append((dirpath, idx, stat))
 
-    # Prefer a candidate that also contains static/ (the typical React build)
+    # Prefer a candidate that also contains static/
     for c in candidates:
         if os.path.exists(c[2]):
             return c
@@ -66,11 +56,7 @@ def find_frontend_build(root_dir: str):
 
     return (None, None, None)
 
-# Search common root locations: repo root and frontend folder
-# First prefer common build locations explicitly (this prevents accidentally
-# picking up frontend/public/index.html which is a source template, not a
-# production build). Only accept frontend/public if it contains a static
-# folder (i.e. looks like a built site).
+# Prefer common build locations first
 preferred_checks = [
     os.path.join(BASE_DIR, 'build'),
     os.path.join(BASE_DIR, 'frontend', 'build'),
@@ -84,8 +70,7 @@ for p in preferred_checks:
         STATIC_DIR = os.path.join(p, 'static') if os.path.exists(os.path.join(p, 'static')) else None
         break
 
-# If we didn't find the usual build directories, search inside frontend
-# but avoid using frontend/public/index.html unless it has static assets.
+# If no usual build dirs found, check frontend/public if it has static/
 if not FRONTEND_BUILD_DIR:
     # check frontend/public but only if it contains static/
     frontend_public = os.path.join(BASE_DIR, 'frontend', 'public')
@@ -94,8 +79,7 @@ if not FRONTEND_BUILD_DIR:
         INDEX_HTML = os.path.join(frontend_public, 'index.html')
         STATIC_DIR = os.path.join(frontend_public, 'static')
 
-# As a final fallback, do a recursive search for any index.html (prefers folders
-# that have static/ because find_frontend_build checks for that first).
+# Final fallback: recursive search
 if not FRONTEND_BUILD_DIR:
     for root in (BASE_DIR, os.path.join(BASE_DIR, 'frontend')):
         bdir, idx, stat = find_frontend_build(root)
@@ -111,7 +95,7 @@ print(f"FRONTEND_BUILD_DIR: {FRONTEND_BUILD_DIR}")
 print(f"STATIC_DIR: {STATIC_DIR}")
 print(f"INDEX_HTML: {INDEX_HTML}")
 
-# Check if directories exist
+# Check if directories exist and load model
 print(f"Base directory exists: {os.path.exists(BASE_DIR)}")
 print(f"Frontend directory exists: {os.path.exists(os.path.join(BASE_DIR, 'frontend'))}")
 
@@ -130,9 +114,7 @@ print(f"Frontend build directory exists: {os.path.exists(FRONTEND_BUILD_DIR) if 
 print(f"Static directory exists: {os.path.exists(STATIC_DIR) if STATIC_DIR else False}")
 print(f"Index.html exists: {os.path.exists(INDEX_HTML) if INDEX_HTML else False}")
 
-# If STATIC_DIR wasn't found next to the detected index.html, try a
-# broader search for common static directories under the project so
-# deployments that place assets in different locations still work.
+# Find any static dir under project as fallback
 def find_any_static(root_dir: str):
     # prefer build/static or public/static, then any folder named 'static'
     candidates = []
@@ -196,7 +178,6 @@ def debug_info():
         debug_info["files_in_cwd"] = os.listdir(os.getcwd())
     except:
         pass
-        
     try:
         debug_info["files_in_base_dir"] = os.listdir(BASE_DIR)
     except:
@@ -254,7 +235,6 @@ async def read_index():
         if path and os.path.exists(path):
             print(f"Found index.html at: {path}")
             return FileResponse(path)
-    
     print("index.html not found in any of the expected locations")
     return HTMLResponse("""
     <html>
