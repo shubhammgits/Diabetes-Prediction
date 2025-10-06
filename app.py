@@ -28,14 +28,18 @@ class model_input(BaseModel):
     DiabetesPedigreeFunction: float
     Age: int
 
+# Try to find the base directory in different ways
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, 'retrained_model.sav')
 
+# Try multiple possible locations for frontend build
 POSSIBLE_BUILD_PATHS = [
     os.path.join(BASE_DIR, 'frontend', 'build'),
     os.path.join(BASE_DIR, 'build'),
+    os.path.join(BASE_DIR, 'frontend-build'),
     'frontend/build',
-    'build'
+    'build',
+    'frontend-build'
 ]
 
 FRONTEND_BUILD_DIR = None
@@ -177,12 +181,15 @@ async def get_photo():
 
 @app.get("/")
 async def read_index():
+    # Try to find index.html in multiple locations
     possible_paths = [
         INDEX_HTML,
         os.path.join(BASE_DIR, 'frontend', 'build', 'index.html'),
         os.path.join(BASE_DIR, 'build', 'index.html'),
+        os.path.join(BASE_DIR, 'frontend-build', 'index.html'),
         'frontend/build/index.html',
         'build/index.html',
+        'frontend-build/index.html',
         'index.html'
     ]
     
@@ -210,12 +217,15 @@ async def read_index():
 
 @app.get("/{full_path:path}")
 async def serve_react_app(full_path: str):
+    # Try to find index.html in multiple locations
     possible_paths = [
         INDEX_HTML,
         os.path.join(BASE_DIR, 'frontend', 'build', 'index.html'),
         os.path.join(BASE_DIR, 'build', 'index.html'),
+        os.path.join(BASE_DIR, 'frontend-build', 'index.html'),
         'frontend/build/index.html',
         'build/index.html',
+        'frontend-build/index.html',
         'index.html'
     ]
     

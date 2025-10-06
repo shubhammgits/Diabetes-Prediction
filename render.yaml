@@ -5,25 +5,37 @@ services:
     buildCommand: |
       # Install Python dependencies first
       pip install -r requirements.txt
-      # Build frontend with verbose output
+      # Build frontend
       cd frontend
-      echo "Installing npm dependencies..."
+      echo "=== BUILD DIAGNOSTICS ==="
+      echo "Node version: $(node --version)"
+      echo "NPM version: $(npm --version)"
+      echo "Current directory: $(pwd)"
+      echo "Contents of current directory:"
+      ls -la
+      echo "=== INSTALLING DEPENDENCIES ==="
       npm install
-      echo "Building frontend..."
+      echo "=== BUILDING FRONTEND ==="
       npm run build
-      echo "Build completed. Checking build directory..."
+      echo "=== BUILD COMPLETE ==="
+      echo "Contents after build:"
+      ls -la
       if [ -d "build" ]; then
         echo "Build directory exists:"
         ls -la build/
-        echo "Index.html exists: $(test -f build/index.html && echo 'Yes' || echo 'No')"
+        echo "Copying build to root directory..."
+        cp -r build ../frontend-build
       else
-        echo "Build directory does not exist"
-        echo "Current directory contents:"
-        ls -la
-        echo "Node version: $(node --version)"
-        echo "NPM version: $(npm --version)"
+        echo "ERROR: Build directory not found!"
+        echo "This is likely the cause of the frontend not loading."
       fi
       cd ..
+      echo "=== ROOT DIRECTORY CONTENTS ==="
+      ls -la
+      if [ -d "frontend-build" ]; then
+        echo "Frontend build successfully copied to root:"
+        ls -la frontend-build/
+      fi
     startCommand: python app.py
     envVars:
       - key: PYTHON_VERSION
